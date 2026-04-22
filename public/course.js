@@ -134,8 +134,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 <!-- Lesson Content Base Styles -->
                 <div class="glass-card rounded-[3rem] overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5)] p-4 md:p-8" data-aos="fade-up" data-aos-delay="400">
                     
-                    <div class="w-full aspect-video rounded-[2rem] overflow-hidden bg-black mb-10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative">
-                        <iframe width="100%" height="100%" src="${lesson.videoUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="relative z-0 filter brightness-95"></iframe>
+                    <div class="w-full aspect-video rounded-[2rem] overflow-hidden bg-black mb-10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative" id="video-wrapper-${lesson.id}">
+                        ${(function() {
+                            const videoId = lesson.videoUrl.split('/embed/')[1]?.split('?')[0] || '';
+                            const wrapperId = 'video-wrapper-' + lesson.id;
+                            return `<div onclick="(function(){
+                                var w=document.getElementById('${wrapperId}');
+                                w.innerHTML='<iframe width=\\'100%\\' height=\\'100%\\' src=\\'${lesson.videoUrl}?autoplay=1\\' frameborder=\\'0\\' allow=\\'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\\' allowfullscreen style=\\'width:100%;height:100%;border:none;\\'></iframe>';
+                            })()" style="cursor:pointer;position:relative;width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;">
+                                <img src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${videoId}/hqdefault.jpg'" style="width:100%;height:100%;object-fit:cover;opacity:0.75;" alt="Video thumbnail" loading="lazy"/>
+                                <div style="position:absolute;width:80px;height:80px;background:rgba(255,0,0,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(255,0,0,0.6);transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">
+                                    <svg viewBox="0 0 24 24" style="width:36px;height:36px;fill:white;margin-left:5px"><path d="M8 5v14l11-7z"/></svg>
+                                </div>
+                                <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.7);font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Click to Play</div>
+                            </div>`;
+                        })()}
                     </div>
                     
                     <div class="px-6 pb-6 relative z-10">
