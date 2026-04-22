@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academy Main Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { fontFamily: { sans: ['Poppins', 'sans-serif'] }, extend: { colors: { primary: '#6366f1' } } }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #020617; color: #f8fafc; overflow-x: hidden; }
+        
+        #vanta-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        
+        .glass-panel { background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3); }
+
+        .course-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); transition: border 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease; }
+        .course-card:hover { box-shadow: 0 30px 60px rgba(99, 102, 241, 0.4); border: 1px solid rgba(99, 102, 241, 0.6); background: rgba(255, 255, 255, 0.07); transform: translateY(-5px); }
+
+        @keyframes subtle-float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-15px) rotate(2deg); } 100% { transform: translateY(0px) rotate(0deg); } }
+        .animate-float { animation: subtle-float 7s ease-in-out infinite; }
+        @keyframes rotate-logo { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        @keyframes sweep {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .preloader-hidden {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+            transform: scale(1.05); /* subtle zoom out when fading */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased relative">
+    
+    <!-- Premium Loading Overlay -->
+    <script>
+        if (sessionStorage.getItem('nova_preloader_shown')) {
+            document.write('<style>#global-preloader { display: none !important; }</style>');
+        }
+    </script>
+    <div id="global-preloader" class="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#020617] backdrop-blur-md transition-all duration-1000 ease-in-out">
+        <div class="relative flex flex-col items-center">
+            
+            <div class="relative w-28 h-28 mb-8 animate-float">
+                <div class="absolute inset-0 bg-indigo-500 rounded-full blur-[40px] animate-pulse opacity-60"></div>
+                <img src="logo.png" alt="NovaLearn" class="w-full h-full object-contain relative z-10 drop-shadow-[0_0_25px_rgba(99,102,241,0.8)] filter contrast-125 brightness-110">
+            </div>
+            
+            <h1 class="text-5xl font-black tracking-tight text-white mb-2 drop-shadow-lg">
+                Nova<span class="text-indigo-500">Learn</span>
+            </h1>
+            
+            <div class="flex flex-col items-center mt-6">
+                <p class="text-indigo-400/80 text-xs font-black uppercase tracking-[0.4em] mb-4 animate-pulse">Initializing Neural Matrix</p>
+                <div class="w-64 h-1.5 bg-slate-800 rounded-full overflow-hidden relative shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] border border-white/5">
+                    <div class="absolute top-0 left-0 h-full w-full bg-gradient-to-r from-transparent via-indigo-500 to-transparent animate-[sweep_2s_ease-in-out_infinite]"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const preloader = document.getElementById('global-preloader');
+        if (!sessionStorage.getItem('nova_preloader_shown')) {
+            window.addEventListener('load', () => {
+                if (preloader) {
+                    setTimeout(() => {
+                        preloader.classList.add('preloader-hidden');
+                        setTimeout(() => {
+                            preloader.remove();
+                            sessionStorage.setItem('nova_preloader_shown', 'true');
+                        }, 1000);
+                    }, 1500);
+                }
+            });
+        } else {
+            if (preloader) preloader.remove(); // Remove immediately if already shown once
+        }
+    </script>
+    
+    <!-- Ultra Premium True 3D WebGL Background -->
+    <div id="vanta-bg"></div>
+
+    <!-- Background Ambient Accents Overlay -->
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 blur-[150px] rounded-full pointer-events-none mix-blend-screen"></div>
+
+    <!-- 3D Parallax Navbar -->
+    <nav class="glass-panel w-full z-50 flex items-center justify-between px-8 py-5 border-t-0 border-l-0 border-r-0 sticky top-0" data-aos="fade-down" data-aos-duration="1000">
+        <div class="flex items-center gap-4 cursor-pointer">
+            <div class="flex items-center">
+                <img src="logo.png" alt="NovaLearn Symbol" class="h-10 md:h-12 object-contain filter drop-shadow-md transition-transform hover:scale-105 duration-300">
+                <h1 class="text-3xl md:text-4xl font-black tracking-tight text-white ml-3">Nova<span class="text-indigo-500">Learn</span></h1>
+            </div>
+            <div class="ml-4 border-l border-white/20 pl-4">
+                <p class="text-xs text-indigo-400 font-black uppercase tracking-widest flex items-center"><i class="fa-solid fa-bolt text-yellow-400 mr-2 drop-shadow-[0_0_5px_#facc15]"></i> Global XP: <span id="nav-global-xp" class="text-white bg-indigo-500/40 px-2 py-0.5 rounded ml-2 tracking-normal shadow-inner">0</span></p>
+            </div>
+        </div>
+        
+        <!-- Role Toggle Switch -->
+        <div class="flex items-center gap-3 bg-[#020617]/70 backdrop-blur border border-white/10 px-5 py-2.5 rounded-full shadow-inner group js-tilt-hover" data-tilt data-tilt-scale="1.05" data-tilt-glare data-tilt-max-glare="0.2">
+            <span class="text-xs font-bold text-slate-300" id="role-text-student">Student</span>
+            
+            <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                <input type="checkbox" name="toggle" id="role-toggle" class="absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-300 z-10 top-0 left-0 hover:scale-110 shadow-[0_0_10px_rgba(255,255,255,0.5)] checked:right-0 checked:border-emerald-500"/>
+                <label for="role-toggle" class="block overflow-hidden h-6 rounded-full bg-slate-700 cursor-pointer transition-colors duration-300 checked:bg-emerald-500"></label>
+            </div>
+            
+            <span class="text-xs font-bold text-slate-500 transition-colors duration-300" id="role-text-lecturer">Lecturer Mode <i class="fa-solid fa-lock-open text-emerald-400 ml-1 opacity-0 transition-opacity drop-shadow-[0_0_5px_#34d399]" id="lecturer-icon"></i></span>
+        </div>
+    </nav>
+
+    <!-- Main Content Panel -->
+    <main class="flex-1 relative z-10 max-w-7xl mx-auto w-full p-8 md:p-12 pb-32">
+        
+        <div class="mb-14 flex flex-col md:flex-row gap-8 items-end justify-between relative" data-aos="zoom-out-up" data-aos-duration="1500">
+            <div class="relative z-10">
+                <h2 class="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-white to-purple-200 tracking-tight leading-none mb-4 drop-shadow-2xl">
+                    Immersive Pathways
+                </h2>
+                <div class="flex items-center gap-4 text-sm md:text-base text-slate-300 font-bold">
+                    <span class="bg-black/40 backdrop-blur-md border border-white/10 px-5 py-2.5 rounded-full shadow-[0_10px_20px_rgba(0,0,0,0.5)]"><i class="fa-solid fa-vr-cardboard text-indigo-400 mr-2"></i> Active Matrix Mode</span>
+                </div>
+                
+                <div id="lecturer-badge" class="hidden absolute -top-12 left-0 px-6 py-2 bg-emerald-500/20 border border-emerald-500/40 rounded-full text-emerald-300 font-black text-sm shadow-[0_0_30px_rgba(16,185,129,0.4)] animate-[bounce_2s_infinite]">
+                    <i class="fa-solid fa-user-tie mr-2"></i> Lecturer Privileges Authorized
+                </div>
+            </div>
+            
+            <!-- Gamified Live Search -->
+            <div class="w-full md:w-1/3 min-w-[300px]">
+                <div class="bg-indigo-950/60 border-2 border-indigo-500/40 rounded-2xl flex items-center px-5 py-4 shadow-[0_15px_30px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+                    <i class="fa-solid fa-magnifying-glass text-indigo-300 text-xl mr-3"></i>
+                    <input type="text" id="course-search" placeholder="Access Module Matrix..." class="bg-transparent border-none w-full text-white text-lg placeholder-indigo-300/50 font-black focus:outline-none">
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Grid -->
+        <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative z-10">
+            <!-- Courses rendered dynamically -->
+        </div>
+    </main>
+
+    <!-- Modal: Add New Lesson -->
+    <div id="add-lesson-modal" class="fixed inset-0 bg-black/80 backdrop-blur-[30px] z-[100] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-500 pointer-events-none" style="perspective: 1200px;">
+        <div class="bg-slate-900 border border-white/20 shadow-[0_50px_100px_rgba(0,0,0,0.9)] rounded-[3rem] w-full max-w-2xl transform scale-90 rotate-x-12 transition-all duration-700" id="modal-panel" data-tilt data-tilt-max="5" data-tilt-glare data-tilt-max-glare="0.1">
+            
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-800 px-10 py-10 relative overflow-hidden rounded-t-[3rem]" style="transform: translateZ(30px);">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-30 mix-blend-overlay"></div>
+                <h3 class="text-3xl font-black text-white relative z-10 drop-shadow-lg"><i class="fa-solid fa-cube mr-3"></i> Add Dimensional Lesson</h3>
+                <p class="text-emerald-100 font-bold text-sm mt-2 relative z-10">Deploy content to <span id="modal-course-name" class="font-black text-white border-b-2 border-emerald-300"></span></p>
+                <button id="close-modal" class="absolute top-8 right-8 w-12 h-12 bg-black/30 hover:bg-black/60 text-white text-xl rounded-full transition relative z-10 shadow-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="add-lesson-form" class="p-10 space-y-8" style="transform: translateZ(40px);">
+                <input type="hidden" id="target-course-id">
+                
+                <div>
+                    <label class="block text-sm font-black text-indigo-300 uppercase tracking-widest mb-3" style="transform: translateZ(50px);">Lesson Title</label>
+                    <input type="text" id="lesson-title" required class="w-full bg-black/50 border border-white/10 rounded-2xl px-6 py-5 text-white text-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 transition shadow-inner font-bold" placeholder="e.g., 3D Matrix Transformations">
+                </div>
+                
+                <div class="bg-gradient-to-r from-orange-500/20 to-transparent border-l-4 border-orange-500 rounded-r-2xl p-5 flex gap-5 shadow-[0_10px_20px_rgba(0,0,0,0.3)]">
+                    <i class="fa-solid fa-wand-magic-sparkles text-orange-400 text-2xl animate-pulse drop-shadow-[0_0_10px_#fb923c]"></i>
+                    <p class="text-sm font-bold text-orange-100 leading-relaxed">Our AI Deepmind Engine will autonomously synthesize 10 dynamic Knowledge-Check questions for this module.</p>
+                </div>
+
+                <div class="pt-6">
+                    <button type="submit" id="submit-lesson-btn" class="w-full overflow-hidden relative group bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 border-2 border-emerald-300/30 text-white font-black text-2xl py-6 rounded-2xl shadow-[0_20px_40px_rgba(16,185,129,0.4)] transition-all">
+                        <span class="relative z-10 flex items-center justify-center gap-3"><i class="fa-solid fa-cloud-arrow-up"></i> Deploy Module Frame</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3D Scripts & Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="dashboard.js?v=3.0"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Academy Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { fontFamily: { sans: ['Poppins', 'sans-serif'] }, extend: { colors: { primary: '#6366f1' } } } }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #020617; color: #f8fafc; overflow-x: hidden; }
+        
+        .glass-panel { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); transition: border 0.3s ease, box-shadow 0.3s ease; }
+        .glass-card:hover { box-shadow: 0 20px 50px rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.2); }
+
+        .glass-button { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); border: 1px solid rgba(255, 255, 255, 0.3); position: relative; overflow: hidden; }
+        .glass-button::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); transition: all 0.7s ease; }
+        .glass-button:hover::after { left: 150%; }
+
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.5); }
+        ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.5); border-radius: 10px; border: 2px solid rgba(0,0,0,0.5); }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.9); }
+
+        .quiz-option { transition: all 0.2s ease; position: relative; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); }
+        .quiz-option:hover:not(.disabled) { border-color: rgba(99, 102, 241, 0.6); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); transform: translateY(-3px); }
+
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased relative">
+
+
+    <!-- Background Orbs -->
+    <div class="absolute top-1/4 right-[10%] w-[500px] h-[500px] bg-purple-600/15 blur-[120px] rounded-full pointer-events-none mix-blend-screen"></div>
+
+    <!-- Navbar Container -->
+    <nav class="glass-panel w-full z-50 flex items-center justify-between px-8 py-4 border-t-0 border-l-0 border-r-0 sticky top-0" data-aos="fade-down" data-aos-duration="1000">
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-indigo-300 hover:text-white hover:bg-indigo-500/30 transition duration-300 mr-2 shadow-inner" title="Eject to Hub">
+                <i class="fa-solid fa-person-walking-arrow-loop-left text-xl"></i>
+            </a>
+            
+            <div class="flex items-center">
+                <img src="logo.png" alt="NovaLearn Symbol" class="h-10 md:h-12 object-contain filter drop-shadow-md transition-transform hover:scale-105 duration-300">
+                <h1 class="text-3xl md:text-4xl font-black tracking-tight text-white ml-3">Nova<span class="text-indigo-500">Learn</span></h1>
+            </div>
+
+            <div class="ml-4 border-l border-white/20 pl-4 hidden md:block">
+                <p id="nav-course-title" class="text-lg font-black tracking-tight text-indigo-300 drop-shadow-lg leading-none">Uploading Data...</p>
+                <p class="text-xs text-indigo-400 font-bold uppercase tracking-widest mt-1"><i class="fa-solid fa-bolt text-yellow-400 mr-1"></i> XP: <span id="nav-global-xp" class="text-white bg-indigo-500/20 px-2 py-0.5 rounded shadow-inner ml-1">0</span></p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-6">
+            <div class="hidden sm:block text-right">
+                <div class="flex justify-between items-end mb-2">
+                    <span class="text-xs font-black text-indigo-400 uppercase tracking-widest"><i class="fa-solid fa-chart-line mr-1"></i> Dimension Sync</span>
+                    <span class="text-sm font-black text-white bg-black/60 px-3 py-1 rounded-full border border-white/10" id="progress-text">0/0</span>
+                </div>
+                <div class="w-56 h-3.5 rounded-full bg-black/80 border border-white/10 overflow-hidden shadow-[inset_0_4px_10px_rgba(0,0,0,0.8)] p-0.5">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full relative shadow-[0_0_10px_rgba(99,102,241,0.8)]" style="width: 0%; transition: width 2s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                        <div class="absolute inset-0 bg-white/20 w-full h-full" style="background-size: 200% 100%; animation: shimmer 2s infinite linear;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- App Container -->
+    <div class="flex flex-1 relative z-10 w-full max-w-[1600px] mx-auto items-start">
+        
+        <aside class="w-96 glass-panel border-y-0 border-l-0 flex flex-col z-20 shrink-0 shadow-[20px_0_40px_rgba(0,0,0,0.4)] sticky top-[90px] h-[calc(100vh-90px)] overflow-hidden" data-aos="fade-right" data-aos-duration="1500">
+            <div class="p-8 h-full flex flex-col bg-gradient-to-b from-[#020617]/50 to-[#0f172a]/90 relative">
+                <div class="absolute -right-20 -top-20 w-40 h-40 bg-indigo-500/20 rounded-full blur-[40px] pointer-events-none"></div>
+                
+                <div class="flex items-center justify-between mb-8 pb-5 border-b border-indigo-500/20">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-indigo-300"><i class="fa-solid fa-list-ul mr-2 drop-shadow-md"></i> Sub-Routines</h2>
+                    <span class="px-3 py-1.5 bg-indigo-500/20 rounded-full text-xs font-black text-indigo-200 border border-indigo-500/40 shadow-[0_0_15px_rgba(99,102,241,0.2)]" id="sidebar-count">0 Modules</span>
+                </div>
+                
+                <div id="sidebar-lessons" class="flex flex-col gap-5 relative overflow-y-auto pr-3 pb-8 flex-1">
+                    <div class="flex justify-center p-10"><div class="w-10 h-10 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-[spin_1s_linear_infinite]"></div></div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 relative scroll-smooth">
+            <div id="main-panel" class="max-w-6xl mx-auto p-6 md:p-14 pb-40 w-full min-h-full"> 
+                <div class="h-full flex flex-col items-center justify-center min-h-[60vh]">
+                    <h1 class="text-3xl text-indigo-400 font-black animate-pulse">Engaging 3D Simulation Engine...</h1>
+                </div>
+            </div>
+        </main>
+        
+    </div>
+
+    <!-- 3D Scripts & Libs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="course.js?v=4.0"></script>
+</body>
+</html>
